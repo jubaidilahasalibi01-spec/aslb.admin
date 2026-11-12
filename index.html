@@ -986,6 +986,7 @@ function openEd(i,add){toggleEditor(true);setTimeout(()=>{if(add==='p')addProj()
 function applyRole(){
  const r=ss.get(ROLE_KEY),ok=!!r,isA=r==='admin';
  $('gatewayScreen').classList.toggle('hidden',ok);
+ if(!ok)document.querySelectorAll('body>section.vw').forEach(s=>s.classList.remove('vw'));
  $('navbar').classList.toggle('hidden',!ok);
  ['adminFloatingControls','dashboard','navDash','navDashM'].forEach(i=>{const e=$(i);if(e)e.classList.toggle('hidden',!isA)});
  document.body.style.overflow=ok?'':'hidden';
@@ -4346,6 +4347,8 @@ html body:not(:has(#gatewayScreen:not(.hidden))) #mapMove i.eT:first-of-type,
 html body .eSpin i.eT:first-of-type{left:0!important;width:100%!important;-webkit-mask-image:none!important;mask-image:none!important}
 @keyframes earthPanOne{from{transform:translate3d(0,0,0)}to{transform:translate3d(calc(-1*var(--P)),0,0)}}
 @media (prefers-reduced-motion:reduce){html body #mapMove,html body .eSpin{animation:none!important}}
+body:has(#gatewayScreen:not(.hidden))>section,body:has(#gatewayScreen:not(.hidden))>section.vw{display:none!important}
+body:has(#gatewayScreen:not(.hidden)) #sideNav,body:has(#gatewayScreen:not(.hidden)) #hamBtn,body:has(#gatewayScreen:not(.hidden)) #sbShade{display:none!important}
 </style>
 </body>
 </html>
