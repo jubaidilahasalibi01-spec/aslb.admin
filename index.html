@@ -4117,7 +4117,7 @@ window.addEventListener('load',function(){setTimeout(function(){var a=document.g
  var t0=Date.now();
  setInterval(function(){try{var L=document.getElementById('threadList');if(!L||L.children.length)return;
   var age=(Date.now()-t0)/1000,err=window.__chatErr,msg=err?'Tidak bisa membaca pesan ('+err+'). Pastikan Anda sudah login sebagai pemilik.':(age<8?'Memuat pesan…':'Belum ada pesan masuk, atau koneksi ke server belum tersambung.');
-  L.innerHTML='<div style="padding:22px 16px;text-align:center;font-size:12px;color:#9fb3c8">'+msg+'<br><button type="button" onclick="retryInbox()" style="margin-top:10px;padding:7px 14px;border-radius:10px;border:1px solid rgba(125,211,252,.5);color:#7dd3fc;background:none">Muat ulang</button></div>'}catch(e){}},3000)})();
+  L.innerHTML='<div class="inboxEmpty">'+msg+'<br><button type="button" onclick="retryInbox()">Muat ulang</button></div>'}catch(e){}},3000)})();
 </script>
 <style id="idCardCss">#home .ringBox{display:none!important}
 #home .lg\:col-span-5>*:not(#idCardWrap){display:none!important}
@@ -5200,6 +5200,105 @@ html[data-skin="moon"] body #sideNav .sbLogo img.sbL{width:84px;height:auto;disp
 html body div#gatewayScreen .gwFrame[class]::before{background:linear-gradient(150deg,rgba(255,255,255,.18),rgba(255,255,255,.04) 24%,rgba(255,255,255,0) 50%),linear-gradient(rgba(5,13,38,.30),rgba(4,10,30,.26))!important;-webkit-backdrop-filter:none!important;backdrop-filter:none!important}
 html body #gatewayScreen .gwFrame img.gwLogo,html body #gatewayScreen .gwFrame .hexL{opacity:1!important;filter:drop-shadow(0 6px 18px rgba(70,140,255,.65)) drop-shadow(0 0 10px rgba(246,200,110,.35))!important}
 </style>
+
+<style id="inboxGlassFix">
+/* Pesan Masuk (web pribadi): kaca bening elegan, sama seperti kotak pesan web publik.
+   Penyebab warna biru-emas: gradasi bingkai (border-box) bocor tembus latar yang transparan.
+   Di sini bingkai digambar lewat ::after (mask), jadi isi kartu tetap bening. */
+html[data-skin="moon"] body #dashboard.vw>.gb.glass-card{
+ background:linear-gradient(150deg,rgba(255,255,255,.22) 0%,rgba(255,255,255,.06) 20%,rgba(255,255,255,0) 46%),linear-gradient(rgba(5,13,38,.24),rgba(4,10,30,.20))!important;
+ border:0!important;-webkit-backdrop-filter:none!important;backdrop-filter:none!important;
+ box-shadow:inset 0 1px 0 rgba(255,255,255,.4),inset 0 -1px 0 rgba(246,200,110,.25),-5px 0 14px -6px rgba(60,130,255,.8),5px 0 14px -6px rgba(60,130,255,.8),0 -4px 12px -6px rgba(246,200,110,.75),0 4px 12px -6px rgba(246,200,110,.75)!important}
+html[data-skin="moon"] body #dashboard.vw>.gb.glass-card::after{
+ content:""!important;display:block!important;position:absolute!important;inset:0!important;border-radius:inherit;padding:1.6px;pointer-events:none;z-index:3;
+ background:linear-gradient(180deg,#fbe0a0 0%,#f2c473 4%,#6aa5ff 18%,#3b82f6 50%,#6aa5ff 82%,#f2c473 96%,#fbe0a0 100%)!important;
+ -webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);-webkit-mask-composite:xor;mask-composite:exclude;opacity:1;transform:none;width:auto;height:auto}
+html[data-skin="moon"] body #dashboard.vw>.gb.glass-card:hover{transform:none}
+/* isi kartu: semua bening */
+html[data-skin="moon"] body #dashboard .tgrid,html[data-skin="moon"] body #dashboard #threadList,html[data-skin="moon"] body #dashboard .tchat,html[data-skin="moon"] body #dashboard #threadMsgs{background:transparent!important}
+html[data-skin="moon"] body #dashboard #threadSearch{background:rgba(4,10,30,.38)!important;border:1px solid rgba(246,207,131,.45)!important;border-radius:999px!important;color:#fff!important;-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px)}
+html[data-skin="moon"] body #dashboard #threadSearch::placeholder{color:rgba(255,236,196,.65)}
+/* status memuat / kosong */
+.inboxEmpty{padding:22px 16px;text-align:center;font-size:12px;color:#f6e7c1;text-shadow:0 1px 3px rgba(2,6,22,.85)}
+.inboxEmpty button{margin-top:10px;padding:7px 18px;border-radius:999px;border:1.2px solid rgba(246,207,131,.6);color:#fbe0a0;background:rgba(255,255,255,.08);-webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px);font-size:12px}
+</style>
+
+<style id="loginGlassFix">
+/* Papan "Masuk sebagai Pemilik": kaca bening elegan (sama seperti papan depan & kotak pesan) */
+html body #loginModal{background:radial-gradient(120% 90% at 50% 40%,rgba(8,14,38,.04),rgba(3,6,18,.14))!important;-webkit-backdrop-filter:none!important;backdrop-filter:none!important}
+html body #loginModal .lgCard[class]::before{
+ background:linear-gradient(150deg,rgba(255,255,255,.16) 0%,rgba(255,255,255,.04) 22%,rgba(255,255,255,0) 48%),linear-gradient(rgba(5,13,38,.07),rgba(4,10,30,.05))!important;
+ -webkit-backdrop-filter:blur(2px);backdrop-filter:blur(2px)}
+/* kolom sandi, tombol: isi bening, bingkai emas (tanpa gradasi yang bocor) */
+html body #loginModal .lgCard .lgF{background:rgba(255,255,255,.04)!important;border:1.5px solid rgba(246,207,131,.7)!important;border-radius:999px!important;-webkit-backdrop-filter:blur(3px);backdrop-filter:blur(3px);box-shadow:inset 0 1px 0 rgba(255,255,255,.25),0 0 12px rgba(70,140,255,.35)!important}
+html body #loginModal .lgCard .lgF:focus-within{border-color:rgba(255,226,166,.95)!important;box-shadow:inset 0 1px 0 rgba(255,255,255,.3),0 0 0 3px rgba(246,207,131,.2),0 0 14px rgba(70,140,255,.45)!important}
+html body #loginModal .lgCard .lgBtn,html body #loginModal .lgCard button.lgBtn{background:linear-gradient(180deg,rgba(255,255,255,.12),rgba(255,255,255,.02))!important;border:1.5px solid rgba(246,207,131,.8)!important;-webkit-backdrop-filter:blur(3px);backdrop-filter:blur(3px);box-shadow:inset 0 1px 0 rgba(255,255,255,.35),-4px 0 14px -6px rgba(60,130,255,.8),4px 0 14px -6px rgba(60,130,255,.8)!important;text-shadow:0 1px 3px rgba(2,6,22,.85)}
+html body #loginModal .lgCard .lgBack{background:rgba(255,255,255,.03)!important;border:1.5px solid rgba(165,198,255,.55)!important;-webkit-backdrop-filter:blur(3px);backdrop-filter:blur(3px)}
+html body #loginModal .lgCard p,html body #loginModal .lgCard .lgK,html body #loginModal .lgCard label{text-shadow:0 1px 3px rgba(2,6,22,.85)}
+
+/* sembunyikan papan depan selama papan login terbuka, supaya bulan terlihat bersih */
+body:has(#loginModal:not(.hidden)) #gatewayScreen{visibility:hidden!important}
+</style>
+
+<style id="inboxLayoutFix">
+/* ===== Tata letak Pesan Masuk (rapi di HP & desktop, tidak bergantung pada Tailwind) ===== */
+html body #dashboard .glass-card:has(#threadList){display:flex!important;flex-direction:column!important;overflow:hidden!important;border-radius:22px!important;font-family:'Plus Jakarta Sans','Inter',system-ui,-apple-system,'Segoe UI',Roboto,sans-serif!important}
+html body #dashboard .glass-card:has(#threadList) :is(h3,p,span,div,button,label,select,input){font-family:inherit!important}
+html body #dashboard .glass-card:has(#threadList) .hidden{display:none!important}
+/* kepala: judul + hitungan, lalu kolom cari */
+html body #dashboard .glass-card:has(#threadList)>div:first-child{display:grid!important;grid-template-columns:auto minmax(0,1fr);align-items:center;gap:12px 14px;padding:16px 18px 14px!important;margin:0!important;border:0!important;border-bottom:1px solid rgba(246,207,131,.30)!important}
+html body #dashboard .glass-card:has(#threadList)>div:first-child>h3{grid-column:1;grid-row:1;white-space:nowrap;margin:0!important;font-size:18px!important;font-weight:700!important;letter-spacing:.01em;line-height:1.2;color:#fff!important;text-shadow:0 1px 4px rgba(2,6,22,.8)}
+html body #dashboard .glass-card:has(#threadList)>div:first-child>div:last-child{grid-column:2;grid-row:1;display:flex!important;flex-direction:column;align-items:flex-end;gap:6px;margin:0!important}
+html body #dashboard #inboxCount{font-size:10.5px!important;line-height:1.3;color:#fbe0a0!important;text-align:right;text-shadow:0 1px 3px rgba(2,6,22,.85)}
+html body #dashboard #threadSearch{grid-column:1/-1;grid-row:2;width:100%!important;max-width:none!important;height:40px;box-sizing:border-box;margin:0!important;padding:0 18px!important;font-size:13px!important;border-radius:999px!important;color:#fff!important}
+/* badan: daftar + percakapan */
+html body #dashboard .tgrid{display:grid!important;grid-template-columns:minmax(0,1fr)!important;grid-template-rows:minmax(0,1fr) auto!important;flex:1 1 auto!important;min-height:0!important;height:auto!important;margin:0!important}
+html body #dashboard:not(.vw) .tgrid{height:min(70vh,580px)!important;min-height:380px!important;flex:none!important}
+html body #dashboard .tgrid>#threadList{grid-column:1;grid-row:1;display:block;min-height:0;max-height:none!important;overflow-y:auto!important;border:0!important;-webkit-overflow-scrolling:touch}
+html body #dashboard .tgrid>.tchat{grid-column:1;grid-row:1/3;display:none!important;flex-direction:column;min-height:0;min-width:0;overflow:hidden;border:0!important}
+html body #dashboard .tgrid.open>.tchat{display:flex!important}
+html body #dashboard .tgrid.open>#threadList,html body #dashboard .tgrid.open>#blockedBox{display:none!important}
+@media(min-width:768px){
+ html body #dashboard .tgrid{grid-template-columns:minmax(0,2fr) minmax(0,3fr)!important}
+ html body #dashboard .tgrid>#threadList{border-right:1px solid rgba(246,207,131,.22)!important}
+ html body #dashboard .tgrid>.tchat{grid-column:2;display:flex!important}
+ html body #dashboard .tgrid.open>#threadList{display:block!important}
+ html body #dashboard #thBack{display:none!important}
+}
+/* daftar percakapan */
+html body #dashboard #threadList>button{display:flex!important;align-items:center;gap:12px;width:100%;box-sizing:border-box;padding:12px 18px!important;margin:0;text-align:left;background:transparent!important;border:0!important;border-bottom:1px solid rgba(246,207,131,.16)!important;color:#fff;cursor:pointer}
+html body #dashboard #threadList>button:active,html body #dashboard #threadList>button:hover{background:rgba(255,255,255,.07)!important}
+html body #dashboard #threadList>button>div:first-child{width:44px;height:44px;flex:none;display:flex;align-items:center;justify-content:center;border-radius:50%;font-size:14px;font-weight:700;color:#fbe0a0;background:rgba(246,207,131,.12);border:1px solid rgba(246,207,131,.55)}
+html body #dashboard #threadList>button>div:nth-child(2){flex:1 1 auto;min-width:0;display:flex;flex-direction:column;gap:3px}
+html body #dashboard #threadList>button>div:nth-child(2)>div{display:flex;align-items:center;justify-content:space-between;gap:8px;min-width:0}
+html body #dashboard #threadList>button p{margin:0!important;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+html body #dashboard #threadList>button>div:nth-child(2)>div:first-child p{font-size:14px!important;font-weight:700!important;color:#fff!important}
+html body #dashboard #threadList>button>div:nth-child(2)>div:last-child p{font-size:12px!important;color:rgba(255,255,255,.72)!important}
+html body #dashboard #threadList>button span{flex:none;font-size:10px;color:rgba(255,255,255,.6)}
+html body #dashboard #threadList>button>div:nth-child(2)>div:last-child span{display:flex;align-items:center;justify-content:center;min-width:20px;height:20px;padding:0 6px;border-radius:10px;background:#f6cf88;color:#1a1204!important;font-size:11px;font-weight:700}
+html body #dashboard #threadList>p{margin:0!important;padding:28px 18px!important;text-align:center;font-size:13px!important;color:rgba(255,255,255,.78)!important}
+/* kepala percakapan */
+html body #dashboard .tchat>div:first-child{display:flex!important;align-items:center;gap:10px;padding:10px 14px!important;margin:0!important;border:0!important;border-bottom:1px solid rgba(246,207,131,.25)!important}
+html body #dashboard #thBack{display:flex;align-items:center;justify-content:center;flex:none;width:34px;height:34px;padding:0!important;border-radius:50%;border:1px solid rgba(246,207,131,.5)!important;background:rgba(255,255,255,.06)!important;color:#fff;font-size:18px;line-height:1}
+html body #dashboard #threadAvatar{flex:none;width:38px;height:38px;display:flex;align-items:center;justify-content:center;border-radius:50%;font-size:13px;font-weight:700;color:#fbe0a0;background:rgba(246,207,131,.12);border:1px solid rgba(246,207,131,.55)}
+html body #dashboard .tchat>div:first-child>div:nth-child(3){flex:1 1 auto;min-width:0}
+html body #dashboard #threadHead{margin:0!important;font-size:14px!important;font-weight:700!important;color:#fff!important;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+html body #dashboard #threadSub{margin:2px 0 0!important;font-size:11px!important;color:rgba(255,255,255,.65)!important}
+html body #dashboard #delThreadBtn{flex:none;padding:6px 12px;border-radius:999px;font-size:10px;letter-spacing:.06em;text-transform:uppercase;color:#fca5a5;background:rgba(255,255,255,.04);border:1px solid rgba(252,165,165,.5)}
+/* isi pesan */
+html body #dashboard #threadMsgs{flex:1 1 auto!important;min-height:0;display:flex!important;flex-direction:column;gap:10px;overflow-y:auto;padding:16px!important;background:transparent!important}
+html body #dashboard #threadMsgs>p{margin:36px 0 0!important;text-align:center;font-size:13px!important;color:rgba(255,255,255,.75)!important}
+/* terjemah + balas */
+html body #dashboard .tchat>div:nth-last-child(2),html body #dashboard .tchat>div:nth-child(3):not(:last-child){background:transparent!important}
+html body #dashboard .trBar{display:flex!important;flex-wrap:wrap;align-items:center;gap:10px 14px;padding:8px 14px!important;border-top:1px solid rgba(246,207,131,.18)}
+html body #dashboard .tchat>div:last-of-type{display:flex!important;align-items:center;gap:8px;padding:10px 12px!important;margin:0!important;border:0!important;border-top:1px solid rgba(246,207,131,.25)!important;box-sizing:border-box}
+html body #dashboard #replyText{flex:1 1 auto;min-width:0;height:42px;box-sizing:border-box;margin:0!important;padding:0 18px!important;font-size:14px!important;border-radius:999px!important;color:#fff!important}
+html body #dashboard .tchat>div:last-of-type>button{flex:none;width:42px;height:42px;display:flex;align-items:center;justify-content:center;padding:0!important;border-radius:50%!important;border:1px solid rgba(255,230,170,.85)!important;background:linear-gradient(180deg,#fbe0a0,#e5ac4c)!important;color:#1a1204!important;font-size:16px;font-weight:700;cursor:pointer;box-shadow:0 0 12px rgba(246,200,110,.45)!important;text-shadow:none!important}
+@media(max-width:767px){html body #dashboard .glass-card:has(#threadList):has(.tgrid.open)>div:first-child{display:none!important}}
+</style>
+
+
+
 <script id="glassJs">(function(){var NL='data:image/svg+xml;utf8,'+encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128"><defs><linearGradient id="e" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fff0c4"/><stop offset=".2" stop-color="#9cc4ff"/><stop offset=".5" stop-color="#4b8cff"/><stop offset=".8" stop-color="#9cc4ff"/><stop offset="1" stop-color="#f7cf80"/></linearGradient><radialGradient id="f" cx=".32" cy=".24" r=".95"><stop offset="0" stop-color="#fff" stop-opacity=".42"/><stop offset=".5" stop-color="#9cc0ff" stop-opacity=".14"/><stop offset="1" stop-color="#091a52" stop-opacity=".42"/></radialGradient><linearGradient id="g" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fffaf0"/><stop offset=".5" stop-color="#ffe2a0"/><stop offset="1" stop-color="#e5ac4c"/></linearGradient><linearGradient id="h" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fff" stop-opacity=".62"/><stop offset="1" stop-color="#ffe9b8" stop-opacity=".18"/></linearGradient><filter id="b" x="-25%" y="-25%" width="150%" height="150%"><feGaussianBlur stdDeviation="3.2"/></filter><filter id="s" x="-20%" y="-20%" width="140%" height="150%"><feGaussianBlur stdDeviation="1.6"/></filter></defs><polygon points="64,6 114,35 114,93 64,122 14,93 14,35" fill="none" stroke="url(#e)" stroke-width="6" opacity=".6" filter="url(#b)"/><polygon points="64,6 114,35 114,93 64,122 14,93 14,35" fill="url(#f)" stroke="url(#e)" stroke-width="4" stroke-linejoin="round"/><polygon points="64,13 108,39 108,89 64,115 20,89 20,39" fill="none" stroke="#fff" stroke-width="1.1" opacity=".5"/><polygon points="64,20 102,42 102,86 64,108 26,86 26,42" fill="none" stroke="#f2c473" stroke-width=".9" opacity=".5"/><path d="M24 46Q34 26 62 14" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" opacity=".6"/><circle cx="72" cy="12.500" r="1.800" fill="#fff" opacity=".7"/><ellipse cx="64" cy="104" rx="26" ry="6" fill="#ffd791" opacity=".28" filter="url(#b)"/><rect x="42" y="54" width="48" height="34" rx="6" fill="#06123a" opacity=".38" filter="url(#s)"/><path d="M52 50v-6a5 5 0 0 1 5-5h14a5 5 0 0 1 5 5v6" fill="none" stroke="url(#g)" stroke-width="4.2" stroke-linecap="round"/><rect x="40" y="50" width="48" height="34" rx="6" fill="url(#h)" stroke="url(#g)" stroke-width="3.6"/><path d="M40 64h48" stroke="url(#g)" stroke-width="2" opacity=".75"/><rect x="58" y="60" width="12" height="9" rx="2" fill="url(#g)" stroke="#fff6dc" stroke-width=".9"/><path d="M46 55.500h36" stroke="#fff" stroke-width="1.8" stroke-linecap="round" opacity=".55"/></svg>');window.__logoSrc=NL;var S='#sideNav,#contactBox,#statsBar,#ctTiles,.tchat,.pjc,.glass-panel,.glass-card,.pfPrice';var t;function run(){try{document.querySelectorAll(S).forEach(function(e){if(!e.classList.contains('gb'))e.classList.add('gb');if(getComputedStyle(e).position==='static'){e.style.setProperty('position','relative','important');['top','left','right','bottom'].forEach(function(k){e.style.setProperty(k,'auto','important')})}});
 document.querySelectorAll('#sideNav .sbLogo svg').forEach(function(v){var i=document.createElement('img');i.className='sbL';i.alt='';i.src=NL;v.replaceWith(i)});
 document.querySelectorAll('img.gwLogo,img.sbL,img.sbLogoImg,.lgIco img').forEach(function(i){if(i.getAttribute('src')!==NL)i.src=NL})}catch(e){}}
@@ -5220,7 +5319,7 @@ html[data-skin="moon"] body .gb.gbNo.gb.gbNo,html[data-skin="moon"] body :is(#x,
 html[data-skin="moon"] body .gb.gbNo.gb.gbNo::after,html[data-skin="moon"] body :is(#x,[id]).gb.gbNo::after{display:none!important}
 html[data-skin="moon"] body #sideNav .sbLogo img.sbLogoImg,html[data-skin="moon"] body #sideNav .sbLogo img.sbL{width:84px;height:auto;display:block;margin:0 auto;filter:drop-shadow(0 4px 12px rgba(70,140,255,.35)) drop-shadow(0 0 6px rgba(246,200,110,.25))!important}
 </style>
-<script id="sbExtraJs">(function(){var r=null;function logos(){var NL=window.__logoSrc;if(!NL)return;document.querySelectorAll('img.sbLogoImg,img.sbL,img.gwLogo,.lgIco img,#sideNav .sbLogo img').forEach(function(i){if(i.getAttribute('src')!==NL)i.src=NL});document.querySelectorAll('.gb').forEach(function(e){if(e.id==='sideNav')return;var rc=e.getBoundingClientRect(),keep=e.id==='contactBox'||e.id==='ctTiles'||e.id==='statsBar'||e.classList.contains('tchat')||e.classList.contains('pjc'),big=rc.width>=innerWidth-16||rc.height>innerHeight*.6;if(rc.width>0&&big&&!keep)e.classList.add('gbNo');else e.classList.remove('gbNo')})}
+<script id="sbExtraJs">(function(){var r=null;function logos(){var NL=window.__logoSrc;if(!NL)return;document.querySelectorAll('img.sbLogoImg,img.sbL,img.gwLogo,.lgIco img,#sideNav .sbLogo img').forEach(function(i){if(i.getAttribute('src')!==NL)i.src=NL});document.querySelectorAll('.gb').forEach(function(e){if(e.id==='sideNav')return;var rc=e.getBoundingClientRect(),keep=e.id==='contactBox'||(e.parentElement&&e.parentElement.id==='dashboard')||e.id==='ctTiles'||e.id==='statsBar'||e.classList.contains('tchat')||e.classList.contains('pjc'),big=rc.width>=innerWidth-16||rc.height>innerHeight*.6;if(rc.width>0&&big&&!keep)e.classList.add('gbNo');else e.classList.remove('gbNo')})}
 function ring(){requestAnimationFrame(ring);var s=document.getElementById('sideNav');if(!s){var __r=document.getElementById('sbRing');if(__r)__r.style.display='none';if(r)r.style.display='none';return}if(!r){r=document.getElementById('sbRing');}if(!r){r=document.createElement('div');r.id='sbRing';document.body.appendChild(r)}
 var cs=getComputedStyle(s),b=s.getBoundingClientRect(),moon=document.documentElement.getAttribute('data-skin')==='moon',show=moon&&b.width>20&&b.right>2&&cs.visibility!=='hidden'&&cs.display!=='none'&&parseFloat(cs.opacity)>.05;
 r.style.display=show?'block':'none';if(show){r.style.left=b.left+'px';r.style.top=b.top+'px';r.style.width=b.width+'px';r.style.height=b.height+'px';r.style.borderRadius=cs.borderRadius;r.style.zIndex=(parseInt(cs.zIndex)||50)+1}}
